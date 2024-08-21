@@ -1,0 +1,817 @@
+document.addEventListener('DOMContentLoaded', function () {
+
+var sns = document.getElementById('submit-no-showable');
+var ss = document.getElementById('submit-showable');
+var snsp = document.getElementById('submit-no-showable-p');
+var ssp = document.getElementById('submit-showable-p');
+var reiniciar = document.querySelector('#reiniciar');
+var reiniciarMob = document.querySelector('#reiniciar-mob');
+var buttonStop = document.querySelector('#button2');
+var buttonPlay = document.querySelector('#button1');
+var buttonPostpone = document.querySelector('#button3');
+
+function esDispositivoMovil() {
+	const esDispositivoMovil =
+		/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+			navigator.userAgent);
+	const anchoPantalla = window.innerWidth || document.documentElement
+		.clientWidth || document.body.clientWidth;
+	const esResolucionBaja = anchoPantalla < 800;
+	return esDispositivoMovil && esResolucionBaja;
+}
+
+function esiPhone() {
+	return (
+		(navigator.userAgent.match(/iPhone|iPod/i) && typeof window
+			.orientation !== 'undefined') ||
+		/^((?!chrome|android).)*safari/i.test(navigator.userAgent) || (
+			'ontouchstart' in window && /iPhone|iPod|iPad/.test(navigator
+				.userAgent)));
+}
+
+function mostrarNotificacion(titulo, subtitulo) {
+	var notificacion = document.getElementById('notificacion');
+	var tituloElement = document.querySelector('.notif-title');
+	var subtituloElement = document.querySelector('.notif-subtitle');
+	tituloElement.innerText = titulo;
+	subtituloElement.innerText = subtitulo;
+	notificacion.style.display = 'block';
+	setTimeout(function () {
+		notificacion.style.opacity = 0;
+		setTimeout(function () {
+			notificacion.style.display = 'none';
+			notificacion.style.opacity = 1;
+		}, 2000);
+	}, 5000);
+}
+if (esDispositivoMovil()) {
+	sns.type = "button";
+	snsp.type = "button";
+	sns.addEventListener('click', function () {
+		mostrarNotificacion("Advertencia : no tiene permisos",
+			"Para usar el botón de 'riego automatizado' del calendario le pedimos se acerque al Aula en el edificio de Electronica/Informatica y use nuestra computadora, búsquenos por nuestro logo de HidroSense."
+			);
+	});
+	ss.addEventListener('click', function () {
+		mostrarNotificacion("Advertencia : no tiene permisos",
+			"Para usar el botón de 'riego programable' del calendario le pedimos se acerque al Aula en el edificio de Electronica/Informatica y use nuestra computadora, búsquenos por nuestro logo de HidroSense."
+			);
+	});
+	snsp.addEventListener('click', function () {
+		mostrarNotificacion("Advertencia : no tiene permisos",
+			"Para usar el botón de 'riego automatizado' del calendario le pedimos se acerque al Aula en el edificio de Electronica/Informatica y use nuestra computadora, búsquenos por nuestro logo de HidroSense."
+			);
+	});
+	ssp.addEventListener('click', function () {
+		mostrarNotificacion("Advertencia : no tiene permisos",
+			"Para usar el botón de 'riego programable' del calendario le pedimos se acerque al Aula en el edificio de Electronica/Informatica y use nuestra computadora, búsquenos por nuestro logo de HidroSense."
+			);
+	});
+	reiniciar.addEventListener('click', function () {
+		mostrarNotificacion("Advertencia : no tiene permisos",
+			"Para usar el botón de 'reinicio' le pedimos se acerque al Aula en el edificio de Electronica/Informatica y use nuestra computadora, búsquenos por nuestro logo de HidroSense."
+			);
+	});
+	reiniciarMob.addEventListener('click', function () {
+		mostrarNotificacion("Advertencia : no tiene permisos",
+			"Para usar el botón de 'reinicio' le pedimos se acerque al Aula en el edificio de Electronica/Informatica y use nuestra computadora, búsquenos por nuestro logo de HidroSense."
+			);
+	});
+	buttonPlay.addEventListener('click', function () {
+		mostrarNotificacion("Advertencia : no tiene permisos",
+			"Para usar el botón de 'regar ahora' le pedimos se acerque al Aula en el edificio de Electronica/Informatica y use nuestra computadora, búsquenos por nuestro logo de HidroSense."
+			);
+	});
+	buttonStop.addEventListener('click', function () {
+		mostrarNotificacion("Advertencia : no tiene permisos",
+			"Para usar el botón de 'detener riego' le pedimos se acerque al Aula en el edificio de Electronica/Informatica y use nuestra computadora, búsquenos por nuestro logo de HidroSense."
+			);
+	});
+	buttonPostpone.addEventListener('click', function () {
+		mostrarNotificacion("Advertencia : no tiene permisos",
+			"Para usar el botón de 'posponer riego' le pedimos se acerque al Aula en el edificio de Electronica/Informatica y use nuestra computadora, búsquenos por nuestro logo de HidroSense."
+			);
+	});
+}
+
+function showProgrammableCard() {
+	document.getElementById('automated-card')
+		.style.display = 'none';
+	document.getElementById('programmable-card')
+		.style.display = 'block';
+}
+
+function showAutomatedCard() {
+	document.getElementById('automated-card')
+		.style.display = 'block';
+	document.getElementById('programmable-card')
+		.style.display = 'none';
+}
+
+function showProgrammableCard_new() {
+	document.getElementById('automated-card_new')
+		.style.display = 'none';
+	document.getElementById('programmable-card_new')
+		.style.display = 'block';
+}
+
+function showAutomatedCard_new() {
+	document.getElementById('automated-card_new')
+		.style.display = 'block';
+	document.getElementById('programmable-card_new')
+		.style.display = 'none';
+}
+
+function agregarComentario() {
+	const nombreUsuario = document.getElementById('nombreUsuario')
+		.value;
+	const comentario = document.getElementById('comentario')
+		.value;
+	const formData = new FormData();
+	formData.append('nombre', nombreUsuario);
+	formData.append('comentario', comentario);
+	fetch('includes/agregar_comentario.php', {
+			method: 'POST'
+			, body: formData
+		})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Error en la solicitud AJAX');
+			}
+			return response.json();
+		})
+		.then(data => {
+			console.log(data);
+			document.getElementById('nombreUsuario')
+				.value = '';
+			document.getElementById('comentario')
+				.value = '';
+			cargarComentarios();
+		})
+		.catch(error => {
+			console.error('Error en la solicitud AJAX:', error);
+		});
+}
+document.getElementById('agregarComentarioForm')
+	.addEventListener('submit', function (event) {
+		event.preventDefault();
+		agregarComentario();
+	});
+
+function formatearFecha(fecha) {
+	const date = new Date(fecha);
+	const dd = String(date.getDate())
+		.padStart(2, '0');
+	const mm = String(date.getMonth() + 1)
+		.padStart(2, '0');
+	const aa = date.getFullYear()
+		.toString()
+		.substr(-2);
+	const hh = String(date.getHours())
+		.padStart(2, '0');
+	const min = String(date.getMinutes())
+		.padStart(2, '0');
+	const seg = String(date.getSeconds())
+		.padStart(2, '0');
+	return `${dd}/${mm}/${aa} ${hh}:${min}:${seg}`;
+}
+
+function ajustarTamañoTexto() {
+	const comentarios = document.querySelectorAll('.media-body');
+	comentarios.forEach(comentario => {
+		const anchoMaximo = "100px";
+		const contenido = comentario.textContent;
+		const contenidoLargo = contenido.length > 50;
+		if (contenidoLargo) {
+			comentario.style.fontSize = '11px';
+		}
+	});
+}
+
+function cargarComentarios() {
+	fetch('includes/obtener_comentarios.php')
+		.then(response => response.json())
+		.then(data => {
+			const comentariosContenido = document.getElementById(
+				'comentariosContenido');
+			comentariosContenido.innerHTML = '';
+			if (data.length == 0) {
+				const mensajeEspera = document.createElement('p');
+				mensajeEspera.textContent =
+					"Te estamos esperando, agregá un comentario...";
+				comentariosContenido.appendChild(mensajeEspera);
+			} else {
+				data.forEach(comentario => {
+					const comentarioElement = document
+						.createElement('div');
+					comentarioElement.className = 'media';
+					comentarioElement.style.marginBottom = "20px";
+					comentarioElement.innerHTML = `
+						<img class="mr-3" src="images/user.png" alt="Usuario" style="height:auto; width:50px; margin-left: 3rem!important;">
+						<div class="media-body" style="font-size:13px; margin-left: 0px; text-align:left; word-break: break-all;">
+						   <h5 class="mt-0" style="font-size:17px">${comentario.nombre}</h5>
+						   (<code style="font-family:sans-serif">${formatearFecha(comentario.fecha)}</code>): ${comentario.comentario}
+						</div>
+						`;
+					comentariosContenido.appendChild(
+						comentarioElement);
+				});
+			}
+		});
+}
+window.onload = function () {
+	cargarComentarios();
+	ajustarTamañoTexto();
+}
+
+function mostrarComentarios() {
+	document.getElementById("verComentarios")
+		.classList.add("active");
+	document.getElementById("agregarComentario")
+		.classList.remove("active");
+	document.getElementById("comentariosContenido")
+		.style.display = "block";
+	document.getElementById("agregarComentarioContenido")
+		.style.display = "none";
+}
+
+function mostrarAgregarComentario() {
+	document.getElementById("agregarComentario")
+		.classList.add("active");
+	document.getElementById("verComentarios")
+		.classList.remove("active");
+	document.getElementById("agregarComentarioContenido")
+		.style.display = "block";
+	document.getElementById("comentariosContenido")
+		.style.display = "none";
+}
+
+function enviarMensaje() {
+	const nombre = document.getElementById("nombre")
+		.value;
+	const apellido = document.getElementById("apellido")
+		.value;
+	const asunto = document.getElementById("asunto")
+		.value;
+	const telefono = document.getElementById("telefono")
+		.value;
+	const mensaje = document.getElementById("mensaje")
+		.value;
+	// Construir el mensaje
+	const mensajeWhatsApp =
+		`Nombre: ${nombre} ${apellido}%0AAsunto: ${asunto}%0ATeléfono: ${telefono}%0AMensaje: ${mensaje}`;
+	// Número de WhatsApp al que se enviará el mensaje
+	const numeroWhatsApp = '+5491128429244';
+	// Generar el enlace de WhatsApp con el mensaje
+	const enlaceWhatsApp =
+		`https://wa.me/${numeroWhatsApp}?text=${mensajeWhatsApp}`;
+	// Redirigir a WhatsApp
+	window.location.href = enlaceWhatsApp;
+	return false;
+}
+
+function openModal(modalId) {
+	document.getElementById('modal' + modalId)
+		.style.display = 'block';
+	document.body.style.overflow = 'hidden';
+}
+
+function closeModal(modalId) {
+	document.getElementById('modal' + modalId)
+		.style.display = 'none';
+	document.body.style.overflow =
+	'auto'; // Cambiado a 'auto' para permitir el desplazamiento nuevamente
+}
+window.onclick = function (event) {
+	if (event.target.className === 'modal') {
+		event.target.style.display = 'none';
+		document.body.style.overflow = 'auto';
+	}
+}
+document.addEventListener('keydown', function (event) {
+	if (event.key === 'Escape') {
+		var modals = document.querySelectorAll('.modal');
+		modals.forEach(function (modal) {
+			modal.style.display = 'none';
+		});
+		document.body.style.overflow = 'auto';
+	}
+});
+
+$(".program-button")
+	.click(function () {
+		$(".program-button")
+			.removeClass("active");
+		$(this)
+			.addClass("active");
+	});
+$(".custom-form")
+	.submit(function (event) {
+		event.preventDefault();
+		var $form = $(this);
+		var formType = $form.attr("id");
+		var selectedProgram = $form.find(
+				".program-button.active")
+			.val();
+		var selectedDay = $form.find("select")
+			.val();
+		var irrigation = $form.find("input[type='checkbox']")
+			.is(":checked") ? 1 : 0;
+		var hourStart = $form.find("input[type='time']")
+			.eq(0)
+			.val();
+		var hourEnd = $form.find("input[type='time']")
+			.eq(1)
+			.val();
+		$.ajax({
+			type: "POST"
+			, url: "includes/procesar_formulario.php"
+			, data: {
+				formType: formType
+				, selectedDay: selectedDay
+				, irrigation: irrigation
+				, selectedProgram: selectedProgram
+				, hourStart: hourStart
+				, hourEnd: hourEnd
+			}
+			, success: function (response) {
+				console.log(response);
+			}
+		});
+	});
+	
+var lastDataTime = 0;
+var accumulatedTime = 0;
+var content5Activated = false;
+var content1Loaded = false;
+var FlagPulsadores = false;
+window.response = {
+	estado: 0
+};
+
+function updateStatistics() {
+	$.ajax({
+		url: "includes/data.php"
+		, type: "GET"
+		, dataType: "json"
+		, success: function (data) {
+			if (data) {
+				var humidityValue = (data.humidity !== undefined) ?
+					data.humidity : 0;
+				$("#humidity-value")
+					.text(humidityValue + "%");
+				$("#humidity-bar")
+					.css("width", humidityValue + "%");
+				$(".humidity .indicator-value")
+					.text(humidityValue + "%");
+				var temperatureValue = (data.temperature !==
+						undefined) ? parseFloat(data.temperature)
+					.toFixed(2) : "0.00";
+				$("#temperature-value")
+					.text(temperatureValue + "°C");
+				$("#temperature-bar")
+					.css("width", (parseFloat(temperatureValue) /
+						50) * 100 + "%");
+				$(".temperature .indicator-value")
+					.text(temperatureValue + "°C");
+				var lightValue = (data.ldr_value !== undefined) ?
+					data.ldr_value : 0;
+				var lightButton = $("#light-button");
+				lightButton.removeClass("btn-success btn-danger");
+				if (lightValue == '1') {
+					lightButton.addClass("btn-success");
+					$("#light-status")
+						.text("Encendido");
+				} else {
+					lightButton.addClass("btn-danger");
+					$("#light-status")
+						.text("Apagado");
+				}
+				var currentTime = Date.now();
+				var dataTime = new Date(data.time)
+					.getTime();
+				var timeDifference = currentTime - dataTime;
+				if (timeDifference > 2000) {
+					accumulatedTime += timeDifference;
+				} else {
+					accumulatedTime = 0;
+				}
+				if (accumulatedTime > 2000) {
+					updateEstado(0);
+					console.log(accumulatedTime, 0)
+				} else {
+					updateEstado(1);
+					console.log(accumulatedTime, 1)
+				}
+				lastDataTime = dataTime;
+			}
+		}
+		, error: function () {
+			console.log("Error al obtener los datos.");
+		}
+	});
+	$.ajax({
+		url: "includes/get_state.php"
+		, type: "GET"
+		, dataType: "json"
+		, success: function (response) {
+			if (response.estado == 1) {
+				content5Activated = false;
+				if (!content1Loaded) {
+					$("#showable #content1")
+						.addClass("active");
+					getChartData();
+					getChartBarData('days');
+					getChartAreaData();
+					content1Loaded = true;
+				}
+				$("#showable")
+					.show();
+				$("#no-showable")
+					.hide();
+				$("#calendary")
+					.attr("onclick", "showContent(3)");
+				$("#statistics")
+					.attr("onclick", "showContent(2)");
+				$("#button-state")
+					.html(
+						'<i class="fa fa-circle" style="color:#00ff00"></i>'
+						)
+					.attr('title', 'Dispositivo encendido');
+				$("#button-state-devices-on")
+					.html('ON 1/50')
+					.addClass('alert-success');
+				$("#button-state-devices-off")
+					.html('OFF 49/50')
+					.addClass('alert-danger');
+				$("#button-state-devices-on-mob")
+					.html('Activos 1/50 dispositivos')
+					.addClass('alert-success');
+				$("#button-state-devices-off-mob")
+					.html('Desconectados 49/50 dispositivos')
+					.addClass('alert-danger');
+				$("#button-state-mob")
+					.html(
+						'<i class="fa fa-circle" style="color:#00ff00"></i> Encendido'
+						)
+					.attr('title', 'Dispositivo encendido');
+				$("#pulsers")
+					.prop("disabled", false);
+				$("#calendary")
+					.removeClass("active");
+				$("#changeable-paragraph")
+					.html(
+						"Data de los sensores en vivo y los gráficos de información almacenada."
+						);
+			} else {
+				if (!content5Activated) {
+					$("#no-showable #content4")
+						.addClass("active");
+					getChartData();
+					getChartBarData('days');
+					getChartAreaData();
+					content5Activated = true;
+				}
+				$("#showable")
+					.hide();
+				$("#no-showable")
+					.show();
+				$("#button-state")
+					.html(
+						'<i class="fa fa-circle" style="color:#ff0000"></i>'
+						)
+					.attr('title', 'Dispositivo Apagado');
+				$("#button-state-devices-on")
+					.html('ON 0/50')
+					.addClass('alert-success');
+				$("#button-state-devices-off")
+					.html('OFF 50/50')
+					.addClass('alert-danger');
+				$("#button-state-devices-on-mob")
+					.html('ON 0/50 DEVICES')
+					.addClass('alert-success');
+				$("#button-state-devices-off-mob")
+					.html('OFF 50/50 DEVICES')
+					.addClass('alert-danger');
+				$("#button-state-mob")
+					.html(
+						'<i class="fa fa-circle" style="color:#ff0000"></i> Apagado'
+						)
+					.attr('title', 'Dispositivo Apagado');
+				$("#pulsers")
+					.prop("disabled", true);
+				$("#calendary")
+					.attr("onclick", "showContent(5)");
+				$("#statistics")
+					.attr("onclick", "showContent(4)");
+				$("#changeable-paragraph")
+					.html(
+						"Se muestran distintos gráficos en base a las estadísticas almacenadas."
+						);
+			}
+		}
+		, error: function () {
+			console.log(
+				"Error al obtener el estado desde la base de datos."
+				);
+		}
+	});
+}
+
+setInterval(function () {
+	updateStatistics();
+}, 1000);
+
+function updateDatabase(option) {
+	var automatedFlag = 0;
+	var programmableFlag = 0;
+	if (option == 'automated') {
+		automatedFlag = 1;
+		showAutomatedCard();
+		showAutomatedCard_new();
+	} else if (option == 'programmable') {
+		programmableFlag = 1;
+		showProgrammableCard();
+		showProgrammableCard_new();
+	}
+	$.ajax({
+		type: "POST"
+		, url: "includes/update_tipo_riego.php"
+		, data: {
+			automatedFlag: automatedFlag
+			, programmableFlag: programmableFlag
+			, option: option
+		}
+		, success: function (response) {
+			console.log(response);
+		}
+	});
+}
+
+function updateEstado(estado) {
+	$.ajax({
+		url: "includes/update_state.php"
+		, type: "POST"
+		, data: {
+			estado: estado
+		}
+		, success: function (response) {
+			console.log(response);
+		}
+		, error: function () {
+			console.log("Error al actualizar el estado.");
+		}
+	});
+}
+
+function reloadStatistics() {
+	$.ajax({
+		url: "includes/get_state.php"
+		, type: "GET"
+		, dataType: "json"
+		, success: function (stateResponse) {
+			if (stateResponse.estado == 0) {
+				$("#reiniciar")
+					.prop("disabled", true)
+					.attr('title', 'Reiniciar dispositivo');
+				$("#reiniciar-mob")
+					.prop("disabled", true)
+					.attr('title', 'Reiniciar dispositivo');
+			} else {
+				$("#reiniciar")
+					.prop("disabled", false)
+					.attr('title', 'Reiniciar dispositivo');
+				$("#reiniciar-mob")
+					.prop("disabled", false)
+					.attr('title', 'Reiniciar dispositivo');
+			}
+		}
+		, error: function () {
+			console.log(
+				"Error al obtener el estado actual del dispositivo."
+				);
+		}
+	});
+	
+	function reiniciarDispositivo() {
+		if (!$(this)
+			.prop("disabled")) {
+			$.ajax({
+				url: "includes/update_reload.php"
+				, type: "POST"
+				, data: {
+					reiniciar: 1
+				}
+				, success: function () {
+					console.log(
+						"El dispositivo está reiniciándose.");
+					$("#reiniciar, #reiniciar-mob")
+						.prop("disabled", true)
+						.attr('title', 'Reiniciándose...');
+				}
+				, error: function () {
+					console.log(
+						"Error al reiniciar el dispositivo.");
+				}
+			});
+		}
+	}
+	if (esDispositivoMovil() == false && esiPhone() == false) {
+		$("#reiniciar, #reiniciar-mob")
+			.click(reiniciarDispositivo);
+	}
+}
+
+setInterval(reloadStatistics, 1000);
+
+function hidePreloader() {
+	const preloader = document.getElementById("preloader");
+	preloader.style.opacity = "0";
+	setTimeout(() => {
+		preloader.style.display = "none";
+	}, 2000);
+}
+setTimeout(hidePreloader, 2000);
+
+function toggleSidebar() {
+	var sidebar = document.getElementById('sidebar');
+	sidebar.classList.toggle('active');
+	var isSidebarActive = sidebar.classList.contains('active');
+	document.body.style.overflow = isSidebarActive ? 'hidden' : 'auto';
+}
+
+function showContent(contentNumber) {
+	var contents = document.getElementsByClassName('content');
+	for (var i = 0; i < contents.length; i++) {
+		contents[i].classList.remove('active');
+	}
+	var content = document.getElementById('content' + contentNumber);
+	content.classList.add('active');
+	var buttons = document.getElementsByClassName('btn');
+	for (var i = 0; i < buttons.length; i++) {
+		buttons[i].classList.remove('active');
+	}
+	var button = document.querySelector('.subheader button:nth-child(' +
+		contentNumber + ')');
+	button.classList.add('active');
+}
+
+function performAction(id, tipo) {
+	let inputTime = $("#inputTime")
+		.val();
+	if (FlagPulsadores) {
+		$.ajax({
+			type: "POST"
+			, url: "includes/update_pulsadores.php"
+			, data: {
+				id: id
+				, tipo: tipo
+				, input_time: inputTime
+			}
+			, success: function (response) {
+				console.log(response);
+				if (response === "1") {
+					calculateEndTime(inputTime);
+				}
+			}
+		});
+	}
+}
+if (esDispositivoMovil() == false && esiPhone() == false) {
+	FlagPulsadores = true;
+}
+
+function checkTimeValidity(startId, endId) {
+	const startInput = document.getElementById(startId);
+	const endInput = document.getElementById(endId);
+	startInput.addEventListener('input', function () {
+		const startTime = startInput.value;
+		const endTime = endInput.value;
+		if (endTime !== '' && startTime > endTime) {
+			startInput.value = '';
+		}
+	});
+	endInput.addEventListener('input', function () {
+		const startTime = startInput.value;
+		const endTime = endInput.value;
+		if (startTime !== '' && endTime < startTime) {
+			endInput.value = '';
+		}
+	});
+}
+
+function calculateEndTime(inputTime) {
+	let parts = inputTime.split(":");
+	let minutes = parseInt(parts[0], 10);
+	let seconds = parseInt(parts[1], 10);
+	if (minutes === 0 && seconds < 5) {
+		document.getElementById("endTime")
+			.textContent = "A partir de 5 segundos.";
+		return;
+	}
+	let currentTime = new Date();
+	let endTime = new Date(currentTime.getTime() + minutes * 60000 + seconds *
+		1000);
+	let endTimeHours = endTime.getHours();
+	let endTimeMinutes = endTime.getMinutes();
+	let formattedEndTime = endTimeHours.toString()
+		.padStart(2, "0") + ":" + endTimeMinutes.toString()
+		.padStart(2, "0");
+	// Actualizar el elemento <span> con la hora de finalización
+	document.getElementById("endTime")
+		.textContent = "Finaliza " + formattedEndTime;
+}
+
+function validateTimeInput(input) {
+	// Obtener el valor actual del campo de entrada
+	let inputValue = input.value;
+	// Si el valor es nulo o está vacío, establecerlo en "00:00"
+	if (!inputValue || inputValue.trim() === "") {
+		input.value = "00:00";
+		inputValue = "00:00"; // Actualizamos la variable inputValue
+	}
+	// Reemplazar caracteres no numéricos con una cadena vacía
+	inputValue = inputValue.replace(/[^\d]/g, "");
+	// Asegurarse de que la entrada tenga una longitud máxima de 4 caracteres
+	if (inputValue.length > 4) {
+		inputValue = inputValue.substr(0, 4);
+	}
+	let minutes = parseInt(inputValue.substr(0, 2), 10);
+	let seconds = parseInt(inputValue.substr(2), 10);
+	minutes = Math.min(Math.max(0, minutes), 59);
+	seconds = Math.min(Math.max(0, seconds), 59);
+	inputValue = String(minutes)
+		.padStart(2, "0") + ":" + String(seconds)
+		.padStart(2, "0");
+	input.value = inputValue;
+	calculateEndTime(inputValue);
+}
+
+function loadFormData(formId, selectName, hourStartId, hourEndId,
+irrigationId) {
+	var hasSelect = selectName !== undefined && selectName !== null &&
+		selectName !== '';
+	var selectedOption = hasSelect ? document.getElementsByName(selectName)[0]
+		.value : null;
+	$.ajax({
+		url: 'includes/get_data.php'
+		, method: 'POST'
+		, data: hasSelect ? {
+			id: selectedOption
+		} : {}
+		, success: function (data) {
+			var jsonData = JSON.parse(data);
+			var flagPrograma = jsonData.selectedProgram;
+			var programButtons = document.querySelectorAll('#' +
+				formId + ' .program-button');
+			programButtons.forEach(function (button) {
+				var dataProgram = button.getAttribute(
+					'data-program');
+				if (dataProgram == flagPrograma) {
+					button.classList.add('active');
+				} else {
+					button.classList.remove('active');
+				}
+			});
+			document.getElementById(hourStartId)
+				.value = jsonData.hourStart;
+			document.getElementById(hourEndId)
+				.value = jsonData.hourEnd;
+			document.getElementById(irrigationId)
+				.checked = jsonData.irrigation == 1 ? true : false;
+		}
+		, error: function (error) {
+			console.error('Error en la solicitud AJAX: ', error);
+		}
+	});
+}
+	var activerButton = document.getElementById("calendary");
+	activerButton.addEventListener('click', function () {
+		loadFormData('showable-form', null, 'hour-start-a',
+			'hour-end-1', 'irrigation1');
+		loadFormData('showable-form', 'dia', 'hour-start-b',
+			'hour-end-2', 'irrigation2');
+		loadFormData('no-showable-form', null, 'hour-start-c',
+			'hour-end-3', 'irrigation3');
+		loadFormData('no-showable-form', 'dia_new',
+			'hour-start-d', 'hour-end-4', 'irrigation_new');
+	});
+	loadFormData('showable-form', null, 'hour-start-a', 'hour-end-1',
+		'irrigation1');
+	loadFormData('showable-form', 'dia', 'hour-start-b', 'hour-end-2',
+		'irrigation2');
+	loadFormData('no-showable-form', null, 'hour-start-c', 'hour-end-3',
+		'irrigation3');
+	loadFormData('no-showable-form', 'dia_new', 'hour-start-d',
+		'hour-end-4', 'irrigation_new');
+	var selectDia = document.getElementById('dia');
+	selectDia.addEventListener('change', function () {
+		loadFormData('showable-form', 'dia', 'hour-start-b',
+			'hour-end-2', 'irrigation2');
+	});
+	var selectDiaNew = document.getElementById('dia_new');
+	selectDiaNew.addEventListener('change', function () {
+		loadFormData('no-showable-form', 'dia_new',
+			'hour-start-d', 'hour-end-4', 'irrigation_new');
+	});
+});
